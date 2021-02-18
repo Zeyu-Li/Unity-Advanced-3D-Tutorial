@@ -13,10 +13,17 @@ This is a **advanced 3D tutorial**. Hopefully you have seem my previous [Unity 3
 
 If you want to follow along, clone from the repo at the [start tag](). There you will find a simple project with movement and a scene
 
+## 2. 
+
 ### TODO:
 
 AI, rendered textures, advanced particles, camera, and lighting
 
 ## License
 
-MIT
+MIT for the Project
+
+Music is inspired by [Kano - Another Life](https://www.youtube.com/watch?v=-zQd6xiGAUo&ab_channel=MAXMELIX) and remixed by Torchkas in the [VLDC9 - Abstract](https://www.smwcentral.net/?p=section&a=details&id=14805). Instrumental remake is made by me and I hereby give it the following license
+
+<a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+
