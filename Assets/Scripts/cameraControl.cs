@@ -6,6 +6,7 @@ public class cameraControl : MonoBehaviour
 {
     // sensitivety of mouse
     public float mouseSpeed = 100f;
+    public float clampSize = 70f;
 
     // place camera here
     public Transform player;
@@ -26,7 +27,7 @@ public class cameraControl : MonoBehaviour
         // for every frame, move camera up or down
         xRotation -= mouseY;
         // clamp the up down rotation
-        xRotation = Mathf.Clamp(xRotation, -85f, 85f);
+        xRotation = Mathf.Clamp(xRotation, -clampSize, clampSize); // clamp so it can't see itself
 
         transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         player.Rotate(Vector3.up * mouseX);
