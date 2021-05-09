@@ -103,7 +103,29 @@ To apply these changes to the current scene:
 
 <a name="effects"></a>
 
+Next we will implement a rendered texture. Think of this as a television screen that broadcasts from a camera live! 
 
+1. Create->Rendered Texture in your texture folder (I named it tv)
+
+2. Change size to 1520x1000
+
+3. Create new material called *tvView*
+
+4. Drag the tv texture to the **Albedo** box (see the green box in the image below)
+
+5. Drag the material onto the object to apply the screen (in my case it will be the brown part of the TV screen)
+
+6. Select the unity camera the captures the action to be rendered (this is the one right bay the blue camera on the top left of the starting position)
+
+7. Go to **Target Texture** and change to the tv
+
+8. If the screen is too dark, enable emissions and drag the tv texture into the Emission's Color box
+
+9. To change the brightness, click on the color box (see red circled)
+
+   ![texture](img/texture.png)
+
+10. The intensity correlates to how much brighter the image is. The color is the tint on the screen
 
 ## 4. ✨ Effects
 
