@@ -10,6 +10,7 @@
 2. [Materials](#materials)
 3. [Textures](#Textures)
 4. [Effects](#effects)
+   * [Fog](#fog)
    * [Rain](#rain) 
    * [Lightning](#lightning)
 5. [Interactive Objects](#interactive)
@@ -70,6 +71,32 @@ Some other options for the materials are:
 
 After a material is made, simply drag the material to the object you want applied (can be done to the scene or in the hierarchy). We will apply the glass texture to the second window to the right in the house.
 
+**Skybox**
+
+Next we will do a skybox, although it will actually be a nightbox. Skybox contain your world and is present as the sky in a default new 3D project. For this tutorial, we remake the skybox presently in the scene
+
+1. In materials folder, do another Create->Material
+
+2. Call it nightBox
+
+3. Select the **Shader** and change it to Skybox->Procedural
+
+   ![nightBox](img/nightBox.png)
+
+4. Now you can change
+
+   * The sun size
+   * Time of day with **Atmosphere Thickness**
+   * "**Ground**" color
+   * Sky tint
+
+To apply these changes to the current scene:
+
+1. Go to your Lighting window (Window->Rendering->Lightning Setting)
+
+2. Environment->Skybox Material
+3. Select the newly created nightBox
+
 <a name="textures"></a>
 
 ## 3. 🧻 Textures
@@ -79,6 +106,12 @@ After a material is made, simply drag the material to the object you want applie
 
 
 ## 4. ✨ Effects
+
+<a name="fog"></a>
+
+**Fog**
+
+
 
 <a name="rain"></a>
 
