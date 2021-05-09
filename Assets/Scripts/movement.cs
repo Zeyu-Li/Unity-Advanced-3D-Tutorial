@@ -27,6 +27,13 @@ public class movement : MonoBehaviour
     public float slopeLimit = 35f;
     private Vector3 slopeParallel;
 
+    // animation
+    public Animator characterAnimator; // attribute must be selected
+
+    // movement
+    private float x;
+    private float z;
+
     // Update is called once per frame
     void Update()
     {
@@ -37,8 +44,8 @@ public class movement : MonoBehaviour
             velocity.y = -2f;
         }
 
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        x = Input.GetAxis("Horizontal");
+        z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
 
@@ -87,5 +94,14 @@ public class movement : MonoBehaviour
         velocity.y += gravity*Time.deltaTime;
 
         controller.Move(velocity * Time.deltaTime);
+    }
+    
+    void FixedUpdate() {
+        // if moving, then idle, else set to moving animation
+        if (x != 0 || z != 0) {
+            characterAnimator.SetInteger("characterState", 1);
+        } else {
+            characterAnimator.SetInteger("characterState", 0);
+        }
     }
 }
