@@ -9,13 +9,13 @@
 1. [Intro](#intro)
 2. [Materials](#materials)
 3. [Textures](#Textures)
-4. [Effects](#effects)
-   * [Fog](#fog)
-   * [Rain](#rain) 
-   * [Lightning](#lightning)
 5. [Interactive Objects](#interactive)
 6. [AI](#ai)
 7. [Embed 2D Game](#2d)
+7. [Effects](#effects)
+   * [Fog](#fog)
+   * [Rain](#rain) 
+   * [Lightning](#lightning)
 8. [Odds and Ends](#odds)
    * [Flashlight](#flashlight)
 
@@ -101,8 +101,6 @@ To apply these changes to the current scene:
 
 ## 3. 🧻 Textures
 
-<a name="effects"></a>
-
 Next we will implement a rendered texture. Think of this as a television screen that broadcasts from a camera live! 
 
 1. Create->Rendered Texture in your texture folder (I named it tv)
@@ -127,7 +125,159 @@ Next we will implement a rendered texture. Think of this as a television screen 
 
 10. The intensity correlates to how much brighter the image is. The color is the tint on the screen
 
-## 4. ✨ Effects
+<a name="interactive"></a>
+
+## 4. 👇 Interactive Objects
+
+In this part we will make several changes such that the game is more interactive. This includes opening drawers/doors, picking up objects. In addition we will be starting the embed 2D game with added a screen when you view the screen. 
+
+The first step is opening the cabinet
+
+1. Create a new animation controller
+
+2. Open the animator and add a bool of openCabinet 
+
+3. Right click in the animator tab and do Create State->Empty and name it empty
+
+4. Drag in the open and close cabinet animations
+
+5. Connect the open, close and empty into a triangle of the form Empty->opening->closing (see below)
+
+   ![openingTransition](img/openingTransition.png)
+
+6. Set the Empty->opening transition to openCabinet = true, opening->closing tranisiton to false and double check to see if closing->Empty has the *Has Exit Time* checkbox checked
+
+   Resource: https://www.youtube.com/watch?v=dEpH6-vwxYY
+
+   
+
+   Now we have an animation for opening and closing the cabinet, we need to open the cabinet when we view and click a button. This can be done via recasting from the camera
+
+7. First add the *eToOpen* sprite to the scene (probably above the cursor) and disable it for now
+
+8. Create an empty SelectionManager that houses the script for toggling the selection
+
+9. In the script do
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   
+   public class select : MonoBehaviour
+   {
+       RaycastHit hit;
+       public GameObject UIDisplay;
+       public string cabinetTag = "Cabinet";
+       public float maxDistance = 2.0f;
+   
+       void Update()
+       {
+           var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+           var cameraTransform = Camera.main.GetComponent<Transform>();
+           Debug.DrawRay(cameraTransform.position, cameraTransform.forward * maxDistance, Color.green);
+           if (Physics.Raycast(ray, out RaycastHit hit, maxDistance)) {
+               Transform selection = hit.transform;
+   
+               if (selection.CompareTag(cabinetTag)) {
+                   var selectionRenderer = selection.GetComponent<Renderer>();
+   
+                   if (selectionRenderer != null) {
+                       // show UI element
+                       UIDisplay.SetActive(true);
+                   }
+               } else {
+                   UIDisplay.SetActive(false);
+               }
+           }
+       }
+   }
+   ```
+
+10. Create a `Cabinet` layer and added the Cabinet layer to the three cabinets door and handle components (see below)
+
+    ![cabinet](img/cabinet.png)
+
+11. Now you can preview the feature and should see that it works
+
+12. Now we want to add checks for when the user presses E and such that it opens
+
+13. 
+
+Now we can open the cabinet, we can do something similar to above with the screen and the password note
+
+1. Drag in passcode png (onto a cube with the right dimensions (try 0.3x0.637)) into the scene and move the to the tree in the back and make sure it's not within the back block/cube (in Lawn->*Block (from back)*), otherwise change the back block to not be intercepting
+
+2. The script we use to do the action can be the same one as the previous one
+
+3. To make the popup for the passcode note, do a new hidden UI image object that is the same as the passcode we dragged in during step 1
+
+4. Now change the script to the following (OR you can drag in another script and change the values there, but there maybe performance hits)
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   
+   public class select : MonoBehaviour
+   {
+       RaycastHit hit;
+       public GameObject UIDisplay;
+       public GameObject UINoteDisplay;
+       public string cabinetTag = "Cabinet";
+       public string noteTag = "Note";
+       public float maxDistance = 2.0f;
+   
+       void Update()
+       {
+           var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+           var cameraTransform = Camera.main.GetComponent<Transform>();
+           Debug.DrawRay(cameraTransform.position, cameraTransform.forward * maxDistance, Color.green);
+           if (Physics.Raycast(ray, out RaycastHit hit, maxDistance)) {
+               Transform selection = hit.transform;
+   
+               if (selection.CompareTag(cabinetTag)) {
+                   var selectionRenderer = selection.GetComponent<Renderer>();
+   
+                   if (selectionRenderer != null) {
+                       // show UI element
+                       UIDisplay.SetActive(true);
+                   }
+               } else if (selection.CompareTag(noteTag)) {
+                   var selectionRenderer = selection.GetComponent<Renderer>();
+                   if (selectionRenderer != null) {
+                       UINoteDisplay.SetActive(true);
+                   }
+               } else {
+                   UIDisplay.SetActive(false);
+                   UINoteDisplay.SetActive(false);
+               }
+           }
+       }
+   }
+   ```
+
+5. Now you may want to added a fade in fade out and that can be done if you follow this [tutorial](https://www.youtube.com/watch?v=92Fz3BjjPL8), but since this is a scary game, no transitions will be needed 😈
+
+Resource: https://www.youtube.com/watch?v=_yf5vzZ2sYE
+
+
+
+<a name="ai"></a>
+
+## 5. 🤖 AI
+
+<!--- This section will begin implementation of some simple AI. This AI will follow --->
+
+<a name="2d"></a>
+
+## 6. 💻 Embed 2D Game
+
+
+
+<a name="effects"></a>
+
+## 7. ✨ Effects
 
 <a name="fog"></a>
 
@@ -144,24 +294,6 @@ Next we will implement a rendered texture. Think of this as a television screen 
 <a name="lightning"></a>
 
 **Lightning**
-
-
-
-<a name="interactive"></a>
-
-## 5. 👇 Interactive Objects
-
-
-
-<a name="ai"></a>
-
-## 6. 🤖 AI
-
-
-
-<a name="2d"></a>
-
-## 7. 💻 Embed 2D Game
 
 
 
