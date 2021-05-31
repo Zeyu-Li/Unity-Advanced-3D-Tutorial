@@ -323,7 +323,15 @@ Resource: https://www.youtube.com/watch?v=_yf5vzZ2sYE
 
 ## 5. 🤖 AI
 
-<!--- This section will begin implementation of some simple AI. This AI will follow --->
+This section will begin implementation of some simple AI. This AI will follow the player if it is outside. 
+
+1. Drag in the ghost model into the lawn (or just start in start-AI tag) into a empty object
+2. Add a *Nav Mesh Agent* to the ghost model
+3. 
+
+Resource: https://www.youtube.com/watch?v=xppompv1DBg
+
+
 
 <a name="2d"></a>
 
