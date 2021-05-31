@@ -202,7 +202,59 @@ The first step is opening the cabinet
 
 12. Now we want to add checks for when the user presses E and such that it opens
 
-13. 
+13. If we want to trigger the animate with `e` key, update select to the follow:
+
+    ```c#
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    
+    public class selectCabinet : MonoBehaviour
+    {
+        RaycastHit hit;
+        public GameObject UIDisplay;
+        public string cabinetTag = "Cabinet";
+        public float maxDistance = 2.0f;
+    
+        void Update()
+        {
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var cameraTransform = Camera.main.GetComponent<Transform>();
+            // Debug.DrawRay(cameraTransform.position, cameraTransform.forward * maxDistance, Color.green);
+            if (Physics.Raycast(ray, out RaycastHit hit, maxDistance)) {
+                Transform selection = hit.transform;
+    
+                if (selection.CompareTag(cabinetTag)) {
+                    var selectionRenderer = selection.GetComponent<Renderer>();
+    
+                    if (selectionRenderer != null) {
+                        if (Input.GetKeyDown(KeyCode.E)) {
+                            // get selection
+                            var sectionAnimator = selection.parent;
+                            // animate cabinet
+                            sectionAnimator.GetComponent<Animator>().SetBool("openCabinet", true);
+                            // set tag to opened cabinet
+                            selectionRenderer.gameObject.tag = "OpenCabinet";
+                        } else {
+                            // show UI element
+                            UIDisplay.SetActive(true);
+                        }
+                    }
+                } else {
+                    UIDisplay.SetActive(false);
+                }
+            } else {
+                UIDisplay.SetActive(false);
+            }
+        }
+    }
+    ```
+
+14. Make sure you attach the animator component to the main model (see the red marker below) then tag only the door part of the model
+
+    ![cabinet](img/interactive.png)
+
+\** Make sure the object you are applying the raycast to has a collider!!
 
 Now we can open the cabinet, we can do something similar to above with the screen and the password note
 
@@ -258,6 +310,10 @@ Now we can open the cabinet, we can do something similar to above with the scree
    ```
 
 5. Now you may want to added a fade in fade out and that can be done if you follow this [tutorial](https://www.youtube.com/watch?v=92Fz3BjjPL8), but since this is a scary game, no transitions will be needed 😈
+
+We can do the same thing with the computer screen but show a different animated screen for that
+
+To see how you do a video in Unity, use this tutorial: https://www.youtube.com/watch?v=p7iXEZGx2Mc
 
 Resource: https://www.youtube.com/watch?v=_yf5vzZ2sYE
 
