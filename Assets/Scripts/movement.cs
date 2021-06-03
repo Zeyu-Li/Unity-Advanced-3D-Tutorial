@@ -16,6 +16,7 @@ public class movement : MonoBehaviour
     public Transform groundCheck;
     public float checkRadius = 0.1f;
     public LayerMask ground;
+    public LayerMask ground2;
 
     public bool isGrounded = false;
 
@@ -38,7 +39,7 @@ public class movement : MonoBehaviour
     void Update()
     {
         // is grounded calculations
-        isGrounded = Physics.CheckSphere(groundCheck.position, checkRadius, ground);
+        isGrounded = Physics.CheckSphere(groundCheck.position, checkRadius, ground) || Physics.CheckSphere(groundCheck.position, checkRadius, ground2);
 
         if (isGrounded) {
             velocity.y = -2f;

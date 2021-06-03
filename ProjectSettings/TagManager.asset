@@ -8,6 +8,7 @@ TagManager:
   - Note
   - Screen
   - OpenCabinet
+  - Lawn
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - 
   - 
   - Ground
-  - 
+  - Lawn
   - 
   - 
   - 
