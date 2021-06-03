@@ -551,7 +551,14 @@ Resource: https://www.youtube.com/watch?v=UjkSFoLxesw
 
 ## 6. 💻 Embed 2D Game
 
+In the next part we will make an embed 2D game within the 3D environment. This could easy be done with loading into a new scene although we must keep track of settings in the previous scene as they are not saved between scenes. In this part we will create a code terminal that will ask the user for a password. If they get it right, then they will we be brought to a 2D platformer to be completed and will result in an end condition for completing the game
 
+1. Create a new Scene called 2D and start the scene
+2. Make a background for the terminal (black Panel + scaled just a touch above 1 so it doesn't have the edge bleed)
+3. Do these steps above or start at [2D start](https://github.com/Zeyu-Li/Unity-Advanced-3D-Tutorial/tree/2D-start)
+4. 
+
+Resource: https://www.youtube.com/watch?v=tCWTJLsxFhw
 
 <a name="effects"></a>
 
