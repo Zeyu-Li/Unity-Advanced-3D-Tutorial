@@ -16,6 +16,7 @@
    * [Fog](#fog)
    * [Rain](#rain) 
    * [Lightning](#lightning)
+   * [Game Over Screen](#gameover)
 8. [Odds and Ends](#odds)
    * [Flashlight](#flashlight)
 
@@ -326,10 +327,223 @@ Resource: https://www.youtube.com/watch?v=_yf5vzZ2sYE
 This section will begin implementation of some simple AI. This AI will follow the player if it is outside. 
 
 1. Drag in the ghost model into the lawn (or just start in start-AI tag) into a empty object
-2. Add a *Nav Mesh Agent* to the ghost model
-3. 
 
-Resource: https://www.youtube.com/watch?v=xppompv1DBg
+2. Add a *Nav Mesh Agent* to the ghost's parent (empty)
+
+3. Change the options for the Nav Mesh Agent
+   * Most of the options are obvious but here are some non obvious ones
+   * Base offset (collision base offset)
+   * Acceleration - How fast the AI accelerates
+   
+4. Add a capsule collider to the top parent along with a rigid body. Set the collider to be about the same as the nav mesh and the rigid body has *Is Kinematic* checked
+
+5. Add the [NavMeshComponents](https://github.com/Unity-Technologies/NavMeshComponents) into the project
+
+   1. Go to the link and clone the repo
+
+   2. Copy the NavMesComponents (in Assets) into the project file
+
+      ![file](img/file.png)
+
+6. Create a new empty gameobject and drag in the *NavMeshSurface*
+
+7. Include the necessary layers and click bake to get the generated surface that the AI can walk on
+
+8. Create a new AI script
+
+9. Paste in the following script
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   using UnityEngine.AI;
+   
+   public class ghostAI : MonoBehaviour
+   {
+       public float lookRadius = 10f;
+       public float timeBetweenAttacks = 2f;
+       public Vector3 walkPoint;
+       bool walkPointSet;
+   
+       Transform target;
+       public NavMeshAgent ghost;
+   
+       public GameObject player;
+       public Vector3 distanceToPatrolPoint ;
+   
+       // Start is called before the first frame update
+       void Start()
+       {
+           target = player.transform;
+       }
+   
+       // Update is called once per frame
+       void Update()
+       {
+           float distance = Vector3.Distance(target.position, transform.position);
+   
+           if (distance < lookRadius) {
+               ghost.SetDestination(target.position);
+               // face target when aggro
+               FaceTarget();
+           } else {
+               // if outside range, patrol
+               Patrol();
+           }
+       }
+   
+       void FaceTarget() {
+           Vector3 direction = (target.position - transform.position).normalized;
+           Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+           transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+       }
+   
+       /**
+       * draws debug sphere for sight
+       */
+       void OnDrawGizmos() {
+           Gizmos.color = Color.red;
+           Gizmos.DrawWireSphere(transform.position, lookRadius);
+       }
+   
+       private void Patrol() {
+           // 
+           if (!walkPointSet) {
+               SearchWalkPoint();
+           }
+           if (walkPointSet) {
+               ghost.SetDestination(walkPoint);
+           }
+   
+           distanceToPatrolPoint = transform.position - walkPoint;
+   
+           if (distanceToPatrolPoint.magnitude < 4f) {
+               walkPointSet = false;
+           }
+       }
+       private void SearchWalkPoint() {
+           // search for suitable random place to walk to
+           float randomZ = Random.Range(-lookRadius, lookRadius);
+           float randomX = Random.Range(-lookRadius, lookRadius);
+   
+           RaycastHit hit;
+   
+           walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+   
+           if (Physics.Raycast(walkPoint, -transform.up, out hit, 2f) && hit.transform.tag == "Lawn") {
+               walkPointSet = true;
+           }
+       }
+   }
+   ```
+
+10. Make sure you have the lawn saved to the lawn layer
+
+11. Now we need to set the attack for the enemy
+
+12. For this tutorial, the player only has 1 life so after they get attacked, the player is forced to restart
+
+13. For this we will be using something similar to the pause menu in the first 3D tutorial since we want to pause after hit and to restart the level
+
+14. See the [Game Over](#gameover) section to find out how to set up the game over UI screen, otherwise update the script with the following
+
+    ```c#
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.AI;
+    
+    public class ghostAI : MonoBehaviour
+    {
+        public float lookRadius = 10f;
+        public float attackRadius = 1f;
+        public float timeBetweenAttacks = 2f;
+        public Vector3 walkPoint;
+        bool walkPointSet;
+    
+        Transform target;
+        public NavMeshAgent ghost;
+    
+        public GameObject player;
+        public GameObject killScreen;
+        private Vector3 distanceToPatrolPoint;
+    
+        // Start is called before the first frame update
+        void Start()
+        {
+            target = player.transform;
+        }
+    
+        // Update is called once per frame
+        void Update()
+        {
+            float distance = Vector3.Distance(target.position, transform.position);
+    
+            if (distance < attackRadius) {
+                // kill player 
+                killScreen.SetActive(true);
+                Time.timeScale = 0f;
+            } else if (distance < lookRadius) {
+                ghost.SetDestination(target.position);
+                // face target when aggro
+                FaceTarget();
+            } else {
+                // if outside range, patrol
+                Patrol();
+            }
+        }
+    
+        void FaceTarget() {
+            Vector3 direction = (target.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
+    
+        /**
+        * draws debug sphere for sight
+        */
+        void OnDrawGizmos() {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(transform.position, lookRadius);
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, attackRadius);
+        }
+    
+        private void Patrol() {
+            // 
+            if (!walkPointSet) {
+                SearchWalkPoint();
+            }
+            if (walkPointSet) {
+                ghost.SetDestination(walkPoint);
+            }
+    
+            distanceToPatrolPoint = transform.position - walkPoint;
+    
+            if (distanceToPatrolPoint.magnitude < 4f) {
+                walkPointSet = false;
+            }
+        }
+        private void SearchWalkPoint() {
+            // search for suitable random place to walk to
+            float randomZ = Random.Range(-lookRadius, lookRadius);
+            float randomX = Random.Range(-lookRadius, lookRadius);
+    
+            RaycastHit hit;
+    
+            walkPoint = new Vector3(transform.position.x + randomX, transform.position.y, transform.position.z + randomZ);
+    
+            if (Physics.Raycast(walkPoint, -transform.up, out hit, 2f) && hit.transform.tag == "Lawn") {
+                walkPointSet = true;
+            }
+        }
+    }
+    ```
+
+15. Add the kill screen UI as the gameover screen
+
+Resource: https://www.youtube.com/watch?v=UjkSFoLxesw
 
 
 
@@ -358,6 +572,12 @@ Resource: https://www.youtube.com/watch?v=xppompv1DBg
 <a name="lightning"></a>
 
 **Lightning**
+
+
+
+<a name="gameover"></a>
+
+**Game Over Screen**
 
 
 
