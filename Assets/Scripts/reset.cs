@@ -11,11 +11,7 @@ public class reset : MonoBehaviour
         PlayerPrefs.SetString("flashlight", "");
         PlayerPrefs.SetInt("position", 0);
         PlayerPrefs.SetInt("win", 0);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        PlayerPrefs.SetString("dialog", "");
+        PlayerPrefs.SetString("screenDialog", "");
     }
 }

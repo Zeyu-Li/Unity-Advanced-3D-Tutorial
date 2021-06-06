@@ -18,7 +18,11 @@ public class typewritter : MonoBehaviour
     // Update is called once per frame
     IEnumerator Type() {
         foreach (char letter in sentence.ToCharArray()) {
-            textDisplay.text += letter;
+            if (letter == '\\') {
+                textDisplay.text += '\n';
+            } else {
+                textDisplay.text += letter;
+            }
             yield return new WaitForSeconds(typingSpeed);
         }
     }
