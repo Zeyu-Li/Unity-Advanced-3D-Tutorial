@@ -9,6 +9,7 @@ TagManager:
   - Screen
   - OpenCabinet
   - Lawn
+  - EnemyShip
   layers:
   - Default
   - TransparentFX
