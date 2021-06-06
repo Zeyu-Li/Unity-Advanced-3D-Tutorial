@@ -6,8 +6,11 @@ public class selectCabinet : MonoBehaviour
 {
     RaycastHit hit;
     public GameObject UIDisplay;
+    public GameObject UIPickup;
     public string cabinetTag = "Cabinet";
+    public string flashlightTag = "Flashlight";
     public float maxDistance = 2.0f;
+    public GameObject playerFlashlight;
 
     void Update()
     {
@@ -33,11 +36,24 @@ public class selectCabinet : MonoBehaviour
                         UIDisplay.SetActive(true);
                     }
                 }
+            } else if (selection.CompareTag(flashlightTag)) {
+                if (Input.GetKeyDown(KeyCode.E)) {
+                    // flashlight pick up
+                    var selectionRenderer = selection.GetComponent<Renderer>();
+                    selectionRenderer.enabled = false;
+                    PlayerPrefs.SetString("flashlight", "true");
+                    playerFlashlight.SetActive(true);
+                } else {
+                    // show UI element
+                    UIPickup.SetActive(true);
+                }
             } else {
                 UIDisplay.SetActive(false);
+                UIPickup.SetActive(false);
             }
         } else {
             UIDisplay.SetActive(false);
+            UIPickup.SetActive(false);
         }
     }
 }

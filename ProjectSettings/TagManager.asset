@@ -10,6 +10,7 @@ TagManager:
   - OpenCabinet
   - Lawn
   - EnemyShip
+  - Flashlight
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - 
   - Ground
   - Lawn
-  - 
+  - Player
   - 
   - 
   - 

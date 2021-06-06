@@ -31,6 +31,8 @@ public class ghostAI : MonoBehaviour
 
         if (distance < attackRadius) {
             // kill player 
+            PlayerPrefs.SetInt("win", 0);
+            PlayerPrefs.SetInt("position", 0);
             killScreen.SetActive(true);
             Time.timeScale = 0f;
         } else if (distance < lookRadius) {
