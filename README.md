@@ -1164,7 +1164,47 @@ You can easily get a fog effect using the Lighting options.
 
 **Flashlight**
 
-We will implement a flashlight here
+We will implement a flashlight here. 
+
+1. First we will have to place the flashlight in the cabinet so there the cabinets can have a purpose
+
+2. We also want to place the flashlight onto the player such that we can toggle it on and off as we please
+
+3. Now when we click e on the flashlight, we pick it up and change the PlayerPrefs which will then trigger the flashlight on the player to show. This is because we want to keep the player setting consistent despite all the scene transitions
+
+4. Set up a onStart script in the main scene with the following
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   
+   public class onStart : MonoBehaviour
+   {
+       public GameObject flashlightObject;
+       public GameObject playerFlashlight;
+       public GameObject player;
+   
+       void Start()
+       {
+           if (PlayerPrefs.GetString("flashlight") == "") {
+               PlayerPrefs.SetString("flashlight", "false");
+           } else if (PlayerPrefs.GetString("flashlight") == "true") {
+               // set flashlight enabled and remove flashlight object
+               flashlightObject.SetActive(false);
+               playerFlashlight.SetActive(true);
+           }
+   
+           // set postion of player
+           if (PlayerPrefs.GetInt("position") == 0) {
+               // set start position if int is 0
+               player.transform.position = new Vector3(4.294f, 2.422f, -15.366f);
+           }
+       }
+   }
+   ```
+
+5. Now if we want to change the settings we just do `PlayerPrefs.SetString("flashlight", "false")` or whatever we need (ie add `PlayerPrefs.SetInt("position", 1)` when entering the shell scene)
 
 
 
@@ -1172,7 +1212,7 @@ We will implement a flashlight here
 
 **Title Screen**
 
-For the title screen, we will just duplicate the Main scene and just add UI elements such that we can select play (we will also rotate around the scene and remove some features like pause)
+For the title screen, we will just duplicate the Main scene and just add UI elements such that we can select play or quit game (we will also rotate around the scene and remove some features like pause). See the [first Unity 3D tutorial](https://github.com/Zeyu-Li/Unity-Tutorial-3D) to see a refresher on how it was made
 
 
 
@@ -1180,7 +1220,7 @@ For the title screen, we will just duplicate the Main scene and just add UI elem
 
 **End Notes**
 
-Now we have reached the end of the tutorial! I hope you have enjoyed the tutorial and have found it somewhat useful. Check out my other tutorials and star this repo if you enjoyed 💖
+Now we have reached the end of the tutorial! I hope you have enjoyed the tutorial and have found it somewhat useful. As you can see, most of the info can be found on Google or YouTube and making this tutorial was honestly stitching up what I knew with content on YouTube. I hope this lessens your worries on starting to really get into Unity! Check out my other tutorials and star this repo if you enjoyed 💖
 
 
 
