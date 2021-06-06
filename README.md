@@ -4,22 +4,31 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
 
+<a name="top"></a>
+
 ## 📌 Index
 
+0. [Demo](#demo)
 1. [Intro](#intro)
 2. [Materials](#materials)
 3. [Textures](#Textures)
-5. [Interactive Objects](#interactive)
-6. [AI](#ai)
-7. [Embed 2D Game](#2d)
+4. [Interactive Objects](#interactive)
+5. [AI](#ai)
+6. [Embed 2D Game](#2d)
 7. [Effects](#effects)
-   * [Fog](#fog)
    * [Rain](#rain) 
    * [Lightning](#lightning)
    * [Text Typing](#typing)
    * [Game Over Screen](#gameover)
+   * [Fog](#fog)
 8. [Odds and Ends](#odds)
    * [Flashlight](#flashlight)
+   * [Title Screen](#titleScreen)
+   * [End Notes](#endNotes)
+
+<a name="demo"></a>
+
+## 0. Demo
 
 <a name="intro"></a>
 
@@ -985,23 +994,59 @@ Otherwise there are still some steps on linking up the terminal, the game, and a
 
 ## 7. ✨ Effects
 
-<a name="fog"></a>
-
-**Fog**
-
-You can easily get a fog effect using the 
-
-
-
 <a name="rain"></a>
 
 **Rain**
+
+See this [YouTube video](#https://youtu.be/Ph3FvxJJ8AA?t=246) starting at 4:06
 
 
 
 <a name="lightning"></a>
 
 **Lightning**
+
+Next we want some lightning to compliment the rain. 
+
+1. Create a spot light that illuniates the whole scene
+
+2. It should have settings similar to the following
+
+   ![lightning](img/lightning.png)
+
+3. The light should make the scene really bright and have a color fade effect
+
+4. Now we want to add a script to it to flash every so often for a set amount of time
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   
+   public class lightning : MonoBehaviour
+   {
+       public Light lightningLight;
+       public float minFlickerTime = 0.1f;
+       public float maxFlickerTime = 0.4f;
+   
+       void Start() {
+           lightningLight = GetComponent<Light>();
+           lightningLight.enabled = false;
+           StartCoroutine("Flicker");
+       }
+   
+       IEnumerator Flicker() {
+           while (true) {
+               yield return new WaitForSeconds(Random.Range(0.4f, 3f));
+               lightningLight.enabled = true;
+               yield return new WaitForSeconds(Random.Range(minFlickerTime, maxFlickerTime));
+               lightningLight.enabled = false;
+           }
+       }
+   }
+   ```
+   
+5. Remember to attach the lights onto the script
 
 
 
@@ -1011,15 +1056,103 @@ You can easily get a fog effect using the
 
 This is for when you want a typewritter effect for your text that slowly gets typed over time. 
 
+The following script will get that effect, however, I had a change of plans and decided to not use it. It is still good to know because this is very common for cutscenes, dialog and much more
+
+```c#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class typewritter : MonoBehaviour
+{
+    public Text textDisplay;
+    public float typingSpeed = 0.05f;
+
+    public string sentence;
+    // Start is called before the first frame update
+    void Start()
+    {
+        StartCoroutine("Type");
+    }
+
+    // Update is called once per frame
+    IEnumerator Type() {
+        foreach (char letter in sentence.ToCharArray()) {
+            textDisplay.text += letter;
+            yield return new WaitForSeconds(typingSpeed);
+        }
+    }
+}
+```
+
 
 
 <a name="gameover"></a>
 
 **Game Over Screen**
 
-Create a kill screen similar to a pause screen
+Create a kill screen similar to a pause screen that activates when within a certain radius (small) from the ghost enemy. We want to show the game over screen with the option to restart
+
+In the end we will get something like the following
+
+![gameOver](img/gameOver.png)
+
+We can add the following script to the scene to reload the level (make sure you state the new scene in the script)
+
+```c#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class enterToNewScene : MonoBehaviour
+{
+    public string newScene;
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return)) {
+            Time.timeScale = 0f;
+            SceneManager.LoadScene(newScene);
+        }
+    }
+}
+```
+
+The ghost enemy also need to be updated (ghostAI) to the following
+
+```c#
+	// ...
+    void Update()
+    {
+        float distance = Vector3.Distance(target.position, transform.position);
+
+        if (distance < attackRadius) {
+            // kill player 
+            killScreen.SetActive(true);
+            Time.timeScale = 0f;
+        } else if (distance < lookRadius) {
+            ghost.SetDestination(target.position);
+            // face target when aggro
+            FaceTarget();
+        } else {
+            // if outside range, patrol
+            Patrol();
+        }
+        // ...
+```
 
 
+
+<a name="fog"></a>
+
+**Fog**
+
+You can easily get a fog effect using the Lighting options. 
+
+1. This window can be accessed through Window->Rendering->Light Setting
+2. Scroll down to Fog and enable it
+3. Here you can set the color, strength and the start and end distances
 
 
 
@@ -1031,7 +1164,27 @@ Create a kill screen similar to a pause screen
 
 **Flashlight**
 
+We will implement a flashlight here
 
+
+
+<a name="titleScreen"></a>
+
+**Title Screen**
+
+For the title screen, we will just duplicate the Main scene and just add UI elements such that we can select play (we will also rotate around the scene and remove some features like pause)
+
+
+
+<a name="endNotes"></a>
+
+**End Notes**
+
+Now we have reached the end of the tutorial! I hope you have enjoyed the tutorial and have found it somewhat useful. Check out my other tutorials and star this repo if you enjoyed 💖
+
+
+
+[🔝 Back to Top](#top)
 
 
 
