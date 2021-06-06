@@ -9,6 +9,7 @@ public class enterToNewScene : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Return)) {
+            Time.timeScale = 1f;
             SceneManager.LoadScene(newScene);
         }
     }
