@@ -16,6 +16,7 @@
    * [Fog](#fog)
    * [Rain](#rain) 
    * [Lightning](#lightning)
+   * [Text Typing](#typing)
    * [Game Over Screen](#gameover)
 8. [Odds and Ends](#odds)
    * [Flashlight](#flashlight)
@@ -551,14 +552,434 @@ Resource: https://www.youtube.com/watch?v=UjkSFoLxesw
 
 ## 6. 💻 Embed 2D Game
 
-In the next part we will make an embed 2D game within the 3D environment. This could easy be done with loading into a new scene although we must keep track of settings in the previous scene as they are not saved between scenes. In this part we will create a code terminal that will ask the user for a password. If they get it right, then they will we be brought to a 2D platformer to be completed and will result in an end condition for completing the game
+In the next part we will make an embed 2D game within the 3D environment. This could easy be done with loading into a new scene although we must keep track of settings in the previous scene as they are not saved between scenes. In this part we will create a code terminal that will ask the user for a password. If they get it right, then they will we be brought to a simple 2D shooter to be completed and will result in an end condition for completing the game
 
 1. Create a new Scene called 2D and start the scene
+
 2. Make a background for the terminal (black Panel + scaled just a touch above 1 so it doesn't have the edge bleed)
+
 3. Do these steps above or start at [2D start](https://github.com/Zeyu-Li/Unity-Advanced-3D-Tutorial/tree/2D-start)
-4. 
+
+4. Watch this series on making a working Terminal: [youtube.com/watch?v=qpvtTb1a9NQ&list=PLf9ofW-QospneJkI2HzX_OzTJavvZkItm](https://www.youtube.com/watch?v=qpvtTb1a9NQ&list=PLf9ofW-QospneJkI2HzX_OzTJavvZkItm)
+
+5. Obviously the commands are different and the following are the commands:
+
+   ```c#
+   using System;
+   using System.Text;
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   using UnityEngine.SceneManagement;
+   
+   public class Interpreter : MonoBehaviour
+   {
+       public GameObject shooterGame;
+       public GameObject terminalUI;
+       List<string> response = new List<string>();
+   
+       public List<string> Interpret(string userInput) {
+           response.Clear();
+   
+           // split
+           string[] args = userInput.Trim().Split();
+   
+           if (args[0] == "help") {
+               response.Add("A list of commands are listed below");
+               response.Add("<color=#22A421>help</color> - a list of commands");
+               response.Add("<color=#22A421>decode </color><color=#cf08c8>args</color> - decodes the");
+               response.Add("message args (case sensitive)");
+               response.Add("<color=#22A421>password</color> <color=#cf08c8>args</color> - enter the password as args");
+               response.Add("<color=#22A421>exit</color> - exit shell environment");
+   
+               return response;
+           } else if (args[0] == "exit") {
+               // load back to other scene
+               response.Add("exiting...");
+               SceneManager.LoadScene("Main");
+   
+               return response;
+           } else if (args[0] == "password") {
+               // check password
+               try {
+                   if (args[1] != "666") {
+                       response.Add("<color=#FF0000>The password you entered is incorrect</color>");
+                       response.Add("please try again");
+                       
+                       return response;
+                   }
+                   // enter 2D shooter
+                   response.Add("virtualizing...");
+   
+                   shooterGame.SetActive(true);
+                   terminalUI.SetActive(false);
+   
+                   return response;
+               } catch {
+                   response.Add("You did not provide a password");
+                   response.Add("Please use the <color=#22A421>help</color> command if you want a refresher");
+                   
+                   return response;
+               }
+           } else if (args[0] == "decode") {
+               // decode message
+               try {
+                   string decodedText = Encoding.UTF8.GetString(Convert.FromBase64String(args[1]));
+                   response.Add(decodedText);
+                   
+                   return response;
+               } catch (IndexOutOfRangeException) {
+                   response.Add("You did not provide an argument to decode");
+                   response.Add("Please use the <color=#22A421>help</color> command if you want a refresher");
+                   
+                   return response;
+               } catch {
+                   response.Add("Could not decode properly, try again :(");
+                   
+                   return response;
+               }
+           } else if (args[0] == "whoami") {
+                   response.Add("Consumed by darkness and tormented by light");
+                   response.Add("you are the one prophesied");
+                   
+                   return response;
+           } else {
+               response.Add("This command is unknown");
+               response.Add("use <color=#22A421>help</color> to find a list of all the usuable commands");
+   
+               return response;
+           }
+       }
+   }
+   ```
 
 Resource: https://www.youtube.com/watch?v=tCWTJLsxFhw
+
+Now we can start doing the simple 2D shooter, which will be very simple pixel art. 
+
+1. Gather the resources and sprites (just the ship)
+
+2. Drag in the ship (and have a background) and scale it such that it looks something like this:
+
+   ![2dGame](img/2dGame.png)
+
+3. Now we want the ship to follow the mouse so make a new script on the ship and paste in the following
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   
+   public class lookToMouse : MonoBehaviour
+   {
+       // from https://answers.unity.com/questions/855976/make-a-player-model-rotate-towards-mouse-location.html
+       // Update is called once per frame
+       void Update() {
+           
+           //Get the Screen positions of the object
+           Vector2 positionOnScreen = Camera.main.WorldToViewportPoint(transform.position);
+           
+           //Get the Screen position of the mouse
+           Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
+           
+           //Get the angle between the points
+           float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
+   
+           //Ta Daaa
+           transform.rotation =  Quaternion.Euler(new Vector3(0f,0f,angle+90));
+       }
+   
+       float AngleBetweenTwoPoints(Vector3 a, Vector3 b) {
+           return Mathf.Atan2(a.y - b.y, a.x - b.x) * Mathf.Rad2Deg;
+       }
+   }
+   ```
+
+4. Now we want to shot projectiles so make a block of a good size and add a 2D box collider (on trigger)
+
+5. We also need to do the same with the enemy (also add a rigid body 2D)
+
+6. We want to add a script to destroy the projectile and the enemy on collision. This is very simple and only requires 4 lines of code but also we want to delete the bullet after a certain amount of seconds such that there is no performance hit from too many bullets (very unlikely to happen with 2D objects but is best practice)
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   
+   public class destroyEnemy : MonoBehaviour
+   {
+       private void Start() {
+           // destroys object after 3 seconds
+           Destroy(gameObject, 3);
+       }
+   
+       private void OnTriggerEnter2D(Collider2D collision) {
+           if (collision.gameObject.CompareTag("EnemyShip")) {        
+               Destroy(collision.gameObject);   
+               // destroy self 
+               Destroy(gameObject);
+           }
+       }
+   }
+   ```
+
+7. Create prefabs for the enemy ship and projectile
+
+8. Now we want to spawn a new instance of a bullet on click (this can be done in the *lookToMouse* script in step 3)
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   
+   public class lookToMouse : MonoBehaviour
+   {
+       // audio    
+       public AudioSource audioSource;
+       public AudioClip shootingSound;
+       public float volume = 0.2f; // volume
+       public float bulletSpeed = 20f; 
+   
+       private Vector2 shootDir;
+   
+       // from https://answers.unity.com/questions/855976/make-a-player-model-rotate-towards-mouse-location.html
+       // Update is called once per frame
+       void Update() {
+           // Get the Screen positions of the object
+           Vector2 positionOnScreen = Camera.main.WorldToViewportPoint(transform.position);
+           
+           // Get the Screen position of the mouse
+           Vector2 mouseOnScreen = (Vector2)Camera.main.ScreenToViewportPoint(Input.mousePosition);
+           
+           // Get the angle between the points
+           float angle = AngleBetweenTwoPoints(positionOnScreen, mouseOnScreen);
+           Quaternion unityAngle = Quaternion.Euler(new Vector3(0f,0f,angle+90));
+   
+           if (Input.GetButtonDown("Fire1")) {
+               // create new object
+               GameObject bullet = (GameObject)Instantiate(Resources.Load("Prefabs/playerProjectile"));
+               // to play sound
+               audioSource.PlayOneShot(shootingSound, volume);
+               bullet.transform.position = transform.position;
+               bullet.transform.rotation = unityAngle;
+   
+               bullet.GetComponent<Rigidbody2D>().AddForce(transform.up * bulletSpeed, ForceMode2D.Impulse);
+           }
+   
+           // set rotation of ship
+           transform.rotation = unityAngle;
+       }
+   
+       float AngleBetweenTwoPoints(Vector3 a, Vector3 b) {
+           return Mathf.Atan2(a.y - b.y, a.x - b.x) * Mathf.Rad2Deg;
+       }
+   }
+   ```
+
+9. Make sure you have a **Resources/Prefabs** in the project with the *playerProjectile* so the instance can be instantiated
+
+10. Now it should generally work however there is no sound
+
+11. Gather the sound files (I used https://sfbgames.itch.io/chiptone to generate my sounds)
+
+12. Use the following to play sounds once:
+
+13. ```c#
+    // audio    
+    public AudioSource audioSource;
+    public AudioClip clip;
+    public float volume = 0.2f; // volume
+    
+    // to play sound
+    audioSource.PlayOneShot(clip, volume);
+    ```
+
+14. Now we can program in the descending enemies. These will be positioned randomly and last only 30 seconds in total. Once the player has defeated them all before they enter the bottom of the screen, we win, otherwise the player will have to try again
+
+15. Create a win UI that will show when you win
+
+16. Add the following to the ship and tune the height and x range to your liking
+
+    ```c#
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    
+    public class spawnEnemy : MonoBehaviour
+    {
+        public float time = 30f;
+        public int shipsCount = 27;
+        [Header("The randomness in the x postion when spawn")]
+        public float x = 5f;
+        
+        [Header("Height of screen")]
+        public float y = 10f;
+    
+        public GameObject endScreen;
+    
+        private bool spawned = false;
+    
+    
+        void Start()
+        {
+            StartCoroutine("Spawn");
+        }
+    
+        public void restart() {
+            StopCoroutine("Spawn");
+            StartCoroutine("Spawn");
+        }
+    
+        void Update() {
+            // this check is squeezed till one is greater than the other (2.5 seconds for the last one to travel across the screen)
+            if (spawned) {
+                // show end message
+                endScreen.SetActive(true);
+            }
+        }
+    
+        // Update is called once per frame
+        IEnumerator Spawn() {
+            for (int i = 0; i < shipsCount; i++) {
+                // spawn enemy ship
+                float randomX = Random.Range(-x, x);
+    
+                float spawnX = transform.position.x + randomX; 
+                float spawnY = transform.position.y + y;
+    
+                // create new object
+                GameObject enemyShip = (GameObject)Instantiate(Resources.Load("Prefabs/enemy"));
+                enemyShip.transform.position = new Vector3(spawnX, spawnY, transform.position.z);
+                
+                // destroys object after 3 seconds
+                Destroy(enemyShip, 3);
+    
+                // randomness
+                if (i == shipsCount - 1) spawned = true;
+                yield return new WaitForSeconds(time/shipsCount + Random.Range(-1 * (time/shipsCount) * 0.5f, 0));
+            }
+        }
+    }
+    ```
+
+17. Now you should be able to play the game except there is no fail condition
+
+18. Drag in a block (sprite) with a 2D box collider (is trigger) that resides under the main screen like so:
+
+    ![layout2](img/layout2.png)
+
+19. Now we add a script to fail once an enemy ship collides with the block
+
+    ```c#
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    
+    public class loseCondition : MonoBehaviour
+    {
+        public GameObject loseUI;
+        // audio    
+        public AudioSource audioSource;
+        public AudioClip dies;
+        public float volume = 0.2f; // volume
+    
+        void Start()
+        {
+            
+        }
+    
+        // Update is called once per frame
+    
+        private void OnTriggerEnter2D(Collider2D collision) {
+            if (collision.gameObject.CompareTag("EnemyShip")) {        
+                Destroy(collision.gameObject);   
+                // opens restart UI
+                loseUI.SetActive(true);
+                loseUI.GetComponent<restartShooter>().end();
+                // to play sound
+                audioSource.PlayOneShot(dies, volume);
+            }
+        }
+    }
+    ```
+
+20. We also want to set is such that the player can reset when they lose. This can be done with the following on the lose UI (similar to the win UI)
+
+    ```c#
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    
+    public class restartShooter : MonoBehaviour
+    {
+        public GameObject ship;
+        public GameObject self;
+    
+        public void end() {
+            ship.SetActive(false);
+            Time.timeScale = 0f;
+        }
+    
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Return)) {
+                // refresh
+                ship.SetActive(true);
+                Time.timeScale = 1f;
+                ship.GetComponent<spawnEnemy>().restart();
+    
+                self.SetActive(false);
+            }
+        }
+    }
+    ```
+
+Let's not forget about transitioning from the main view to the shell view. This can be done with a simple scene load when the player presses `space` on shell video screen
+
+1. Added directions to enter the shell environment in the shell video (under the video raw so it will show when the video shows) 
+
+2. Add a script that defines this behaviour under the directions 
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   using UnityEngine.SceneManagement;
+   
+   public class enterToNewScene : MonoBehaviour
+   {
+       void Update()
+       {
+           if (Input.GetKeyDown(KeyCode.Return)) {
+               SceneManager.LoadScene("2D", LoadSceneMode.Additive);
+           }
+       }
+   }
+   ```
+
+3. You also want scripts to hide and show cursors:
+
+   ```c#
+   using System.Collections;
+   using System.Collections.Generic;
+   using UnityEngine;
+   
+   public class showCursor : MonoBehaviour
+   {
+       // Start is called before the first frame update
+       void Start()
+       {
+           // change to false if not wanting to show cursor and remove the lock state line
+           Cursor.lockState = CursorLockMode.None;
+           Cursor.visible = true;
+       }
+   }
+   ```
+
+
+Otherwise there are still some steps on linking up the terminal, the game, and a few other things, but that is left to you to figure out and play with
+
+
 
 <a name="effects"></a>
 
@@ -567,6 +988,8 @@ Resource: https://www.youtube.com/watch?v=tCWTJLsxFhw
 <a name="fog"></a>
 
 **Fog**
+
+You can easily get a fog effect using the 
 
 
 
@@ -582,9 +1005,21 @@ Resource: https://www.youtube.com/watch?v=tCWTJLsxFhw
 
 
 
+<a name="typing"></a>
+
+**Text Typing**
+
+This is for when you want a typewritter effect for your text that slowly gets typed over time. 
+
+
+
 <a name="gameover"></a>
 
 **Game Over Screen**
+
+Create a kill screen similar to a pause screen
+
+
 
 
 
@@ -598,6 +1033,8 @@ Resource: https://www.youtube.com/watch?v=tCWTJLsxFhw
 
 
 
+
+
 ## License
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
@@ -606,3 +1043,4 @@ Music is inspired by [Kano - Another Life](https://www.youtube.com/watch?v=-zQd6
 
 <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
+Sounds from https://sfbgames.itch.io/chiptone
