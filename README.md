@@ -42,7 +42,7 @@
 
 ## 1. 👋 Intro
 
-This is a **advanced 3D tutorial**. Hopefully you have seem my previous [Unity 3D tutorial](https://github.com/Zeyu-Li/Unity-Tutorial-3D#unity-user-guide) or are fairly familiar with Unity 3D because I am assuming you are aware of familiar Unity 3D concepts. In addition I will start in a project that has implemented the things in Unity 3D tutorial. The aim of this tutorial is to show the lesser known things in Unity but can be quite useful to know or implement. This tutorial will implement a horror game with a 2D game embed inside the 3D game. 
+This is an **advanced 3D tutorial**. Hopefully you have seen my previous [Unity 3D tutorial](https://github.com/Zeyu-Li/Unity-Tutorial-3D#unity-user-guide) or are fairly familiar with Unity 3D because I am assuming you are aware of familiar Unity 3D concepts. In addition I will start on a project that has implemented the things in Unity 3D tutorial. The aim of this tutorial is to show the lesser known things in Unity but can be quite useful to know or implement. This tutorial will implement a horror game with a 2D game embed inside the 3D game. 
 
 If you want to follow along, clone from the repo at the [start tag](https://github.com/Zeyu-Li/Unity-Advanced-3D-Tutorial/releases/tag/start) to get the beginning of the project, or skip to whichever selection you want by cloning at the corresponding tag. There you will find a simple project with movement and a scene as shown below
 
@@ -92,7 +92,7 @@ After a material is made, simply drag the material to the object you want applie
 
 **Skybox**
 
-Next we will do a skybox, although it will actually be a nightbox. Skybox contain your world and is present as the sky in a default new 3D project. For this tutorial, we remake the skybox presently in the scene
+Next we will do a skybox, although it will actually be a nightbox. Skybox contains your world and is present as the sky in a default new 3D project. For this tutorial, we remake the skybox presently in the scene
 
 1. In materials folder, do another Create->Material
 
@@ -148,7 +148,7 @@ Next we will implement a rendered texture. Think of this as a television screen 
 
 ## 4. 👇 Interactive Objects
 
-In this part we will make several changes such that the game is more interactive. This includes opening drawers/doors, picking up objects. In addition we will be starting the embed 2D game with added a screen when you view the screen. 
+In this part we will make several changes such that the game is more interactive. This includes opening drawers/doors, picking up objects. In addition we will be starting the embedded 2D game with added a screen when you view the screen. 
 
 The first step is opening the cabinet
 
@@ -164,7 +164,7 @@ The first step is opening the cabinet
 
    ![openingTransition](img/openingTransition.png)
 
-6. Set the Empty->opening transition to openCabinet = true, opening->closing tranisiton to false and double check to see if closing->Empty has the *Has Exit Time* checkbox checked
+6. Set the Empty->opening transition to openCabinet = true, opening->closing transition to false and double check to see if closing->Empty has the *Has Exit Time* checkbox checked
 
    Resource: https://www.youtube.com/watch?v=dEpH6-vwxYY
 
@@ -569,7 +569,7 @@ Resource: https://www.youtube.com/watch?v=UjkSFoLxesw
 
 ## 6. 💻 Embed 2D Game
 
-In the next part we will make an embed 2D game within the 3D environment. This could easy be done with loading into a new scene although we must keep track of settings in the previous scene as they are not saved between scenes. In this part we will create a code terminal that will ask the user for a password. If they get it right, then they will we be brought to a simple 2D shooter to be completed and will result in an end condition for completing the game
+In the next part we will make an embedded 2D game within the 3D environment. This could easily be done with loading into a new scene although we must keep track of settings in the previous scene as they are not saved between scenes. In this part we will create a code terminal that will ask the user for a password. If they get it right, then they will we be brought to a simple 2D shooter to be completed and will result in an end condition for completing the game
 
 1. Create a new Scene called 2D and start the scene
 
@@ -920,7 +920,7 @@ Now we can start doing the simple 2D shooter, which will be very simple pixel ar
     }
     ```
 
-20. We also want to set is such that the player can reset when they lose. This can be done with the following on the lose UI (similar to the win UI)
+20. We also want to set it such that the player can reset when they lose. This can be done with the following on the lose UI (similar to the win UI)
 
     ```c#
     using System.Collections;
@@ -1016,7 +1016,7 @@ See this [YouTube video](#https://youtu.be/Ph3FvxJJ8AA?t=246) starting at 4:06
 
 Next we want some lightning to compliment the rain. 
 
-1. Create a spot light that illuniates the whole scene
+1. Create a spot light that illuminates the whole scene
 
 2. It should have settings similar to the following
 
